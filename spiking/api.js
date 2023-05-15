@@ -1,6 +1,7 @@
 const { Configuration, OpenAIApi } = require("openai");
 const axios = require("axios");
 require("dotenv").config();
+const completion = require("../.prompts.js")
 
 const configuration = new Configuration({
   organization: "org-bnp0afpJ02bzWExr6F7S5goX",
@@ -8,21 +9,29 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const getPrompt = async (subject = "cat", verb = "swimming", style = "wes anderson") => {
-  const body = {
+const getPrompt = async (subject = "cat", verb = "swimming", style = "photorealistic") => {
+  if (!configuration.apiKey) {
+    console.log(configuration)
+  }
+  const req = {
     model: "text-davinci-003",
-    prompt: `I'm going to provide a subject, a verb and an art style. Use these to generate a prompt DALL-E and return this as a JSON object with the properties "prompt", "description", "title" and "keywords". "description" should be marketing copy for a t-shirt bearing the image, "title" is the title of the t-shirt, and "keywords" is an array of keywords. Do not mention the style in the description.
-
-    Subject: ${subject}
-    Verb: ${verb}
-    Style: ${style}`,
+    prompt: completion,
     max_tokens: 500,
     temperature: 0.7,
   };
-  const res = await openai.createCompletion(body);
-  const obj = JSON.parse(res.data.choices[0].text);
 
-  return obj;
+  try {
+    res.status(200)
+    // const res = await openai.createCompletion(req);
+    // const obj = JSON.parse(res.data.choices[0].text);
+  } catch(error) {
+    console.error(error.message)
+    // response.status: 500
+  }
+
+  // return obj;
 };
+
+getPrompt()
 
 module.exports = { getPrompt };
