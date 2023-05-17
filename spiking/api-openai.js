@@ -1,7 +1,6 @@
 require("dotenv").config();
 const { completion } = require("../.prompts.js");
 const axios = require("axios");
-const generateShirt = require("./api-teemill.js")
 
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -27,35 +26,48 @@ const generatePrompt = (subject, verb, style) => {
     temperature: 0.7,
   };
 
-  api
+  return api
     .post("completions", params)
     .then((res) => {
       const obj = JSON.parse(res.data.choices[0].text);
-      console.log(obj)
-      // generateImage(obj.prompt)
       return obj;
     })
     .catch((err) => {
-      console.error(`An error occurred: ${err.message}`);
+      console.error(`An error occurred in generatePrompt: ${err.message}`);
+      console.log(err);
     });
 };
 
-const generateImage = (prompt) => {
-const params = {
-  prompt,
-  n: 4,
-  size: "1024x1024",
-  response_format: "url"
-}
+const generateImage = (res) => {
+  const params = {
+    prompt: res.prompt,
+    n: 1,
+    size: "1024x1024",
+    response_format: "url",
+  };
 
-api.post("images/generations", params).then(({data}) => {
-  console.log(data.data)
-}).catch((err) => {
-  console.log(err)
-  console.error(`An error occured: ${err.message}`)
-})
-}
+  // {
+  //   "created": 1589478378,
+  //   "data": [
+  //     {
+  //       "url": "https://..."
+  //     },
+  //     {
+  //       "url": "https://..."
+  //     }
+  //   ]
+  // }
 
-generatePrompt("Boat", "Diving into the sea", "surrealistic")
+  return api
+    .post("images/generations", params)
+    .then(({ data }) => {
+      res.image_url = data.data[0].url;
+      return res;
+    })
+    .catch((err) => {
+      console.error(`An error occured in generateImage: ${err.message}`);
+      console.log(err);
+    });
+};
 
 module.exports = { generatePrompt, generateImage };
