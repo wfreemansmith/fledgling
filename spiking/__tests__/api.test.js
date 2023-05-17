@@ -1,4 +1,4 @@
-const { getPrompt } = require("../api");
+const { getPrompt } = require("../api-openai");
 
 describe("ChatGPT API", () => {
   test("should return an object", () => {
@@ -6,9 +6,6 @@ describe("ChatGPT API", () => {
       expect(typeof res === "object").toBe(true);
       expect(Array.isArray(res)).toBe(false);
     });
-    // const res = await getPrompt("cat")
-    // expect(typeof res === "object").toBe(true)
-    // expect(Array.isArray(res)).toBe(false)
   });
   test("should return an object with all necessary properties", () => {
     return getPrompt().then((res) => {
