@@ -1,11 +1,13 @@
 const axios = require("axios");
 require("dotenv").config();
 
+const apiKey = process.env.RAPID_API_KEY
+
 const api = axios.create({
   baseURL: "https://background-removal.p.rapidapi.com/",
   headers: {
     "content-type": "application/x-www-form-urlencoded",
-    "X-RapidAPI-Key": "0871ce2644msh81e1009e9234346p1a7d26jsn222b02914533",
+    "X-RapidAPI-Key": apiKey,
     "X-RapidAPI-Host": "background-removal.p.rapidapi.com",
   },
 });
